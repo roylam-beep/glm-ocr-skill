@@ -50,7 +50,7 @@ def load_api_key() -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="GLM-OCR Skill — 香港會計單據 OCR 掃描工具"
+        description="GLM-OCR Skill — 會計單據 OCR 掃描工具"
     )
     parser.add_argument(
         "--dir",
