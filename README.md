@@ -2,18 +2,16 @@
 
 ![GitHub Topics](https://img.shields.io/badge/topics-ocr%20%7C%20glm%20%7C%20zai%20%7C%20invoice%20%7C%20receipt%20%7C%20accounting%20%7C%20document--parsing%20%7C%20vision--llm-blue)
 
-> **English** | A CLI tool that scans local folders of receipts, invoices, and documents using Z.ai's GLM-OCR model. Outputs structured Markdown + JSON with layout analysis. Powered by `glm-ocr` via the [Z.ai API](https://api.z.ai). Zero-config, single-command: `python scripts/main.py`.
+A CLI tool that scans local folders of receipts, invoices, and documents using Z.ai's GLM-OCR model. Outputs structured Markdown + JSON with layout analysis. Zero-config, single-command: `python scripts/main.py`.
 
-使用 Z.ai 的 GLM-OCR 模型，掃描本地資料夾中的單據（圖片 / PDF / WebP），輸出結構化的 OCR 辨識結果。支援發票、收據、銀行單據等文件的文字辨識與版面分析。
+## Quick Start
 
-## 快速開始
-
-### 1. 環境需求
+### 1. Requirements
 
 - Python 3.10+
 - pip
 
-### 2. 安裝
+### 2. Install
 
 ```bash
 git clone <repo-url>
@@ -21,23 +19,23 @@ cd hk-glm-ocr-skill
 pip install -r requirements.txt
 ```
 
-### 3. 設定 API Key
+### 3. Set API Key
 
 ```bash
 cp .env.example .env
 ```
 
-編輯 `.env`，填入你的 Z.ai API Key：
+Edit `.env` and paste your Z.ai API Key:
 
 ```
-ZAI_API_KEY=你的_API_Key
+ZAI_API_KEY=your_api_key_here
 ```
 
-> 在 <a href="https://open.bigmodel.cn/" target="_blank" rel="noopener noreferrer">Z.ai Open Platform</a> 註冊並建立 API Key。
+> Get your key at <a href="https://open.bigmodel.cn/" target="_blank" rel="noopener noreferrer">Z.ai Open Platform</a>.
 
-### 4. 放入單據
+### 4. Place Documents
 
-將要掃描的圖片或 PDF 檔案放入 `scans/` 目錄：
+Drop your images or PDFs into the `scans/` folder:
 
 ```
 scans/
@@ -46,83 +44,83 @@ scans/
 └── bank_statement.png
 ```
 
-### 5. 執行掃描
+### 5. Run
 
 ```bash
 python scripts/main.py
 ```
 
-## 進階用法
+## Advanced Usage
 
 ```bash
-# 指定掃描目錄
+# Custom scan directory
 python scripts/main.py --dir /path/to/documents
 
-# 指定輸出目錄
+# Custom output directory
 python scripts/main.py --dir ./scans --output ./results
 
-# 只輸出 Markdown（不產 JSON）
+# Markdown only (skip per-file JSON)
 python scripts/main.py --no-json
 
-# 不產生合併檔
+# Skip combined output
 python scripts/main.py --no-combined
 ```
 
-## 支援的檔案格式
+## Supported Formats
 
-| 格式 | 附檔名 | 大小上限 |
-|------|--------|---------|
+| Format | Extensions | Max Size |
+|--------|-----------|----------|
 | JPEG | `.jpg` `.jpeg` | 10 MB |
 | PNG | `.png` | 10 MB |
-| WebP | `.webp` | 10 MB（自動轉 PNG） |
+| WebP | `.webp` | 10 MB (auto-converted to PNG) |
 | PDF | `.pdf` | 50 MB |
 
-## 輸出說明
+## Output
 
-掃描完成後，`output/` 目錄會產生以下檔案：
+After scanning, the `output/` directory contains:
 
-| 檔案 | 說明 |
-|------|------|
-| `{檔名}_ocr.md` | 單一檔案的 OCR 文字結果（Markdown 格式） |
-| `{檔名}_ocr.json` | 單一檔案的完整 API 回應（含版面分析） |
-| `combined_ocr.md` | 所有檔案合併的 Markdown 報告 |
-| `summary.json` | 處理彙總（成功/失敗、頁數、Token 用量） |
+| File | Description |
+|------|-------------|
+| `{name}_ocr.md` | Per-file OCR result in Markdown |
+| `{name}_ocr.json` | Full API response with layout analysis |
+| `combined_ocr.md` | All results merged into a single Markdown report |
+| `summary.json` | Processing summary (success/fail, pages, token usage) |
 
-## 專案結構
+## Project Structure
 
 ```
 hk-glm-ocr-skill/
-├── .env.example            # API Key 範本
+├── .env.example            # API key template
 ├── .gitignore
-├── SKILL.md                # Qoder Skill 定義
+├── SKILL.md                # Qoder Skill definition
 ├── README.md
-├── requirements.txt        # Python 依賴
-├── scans/                  # 待掃描單據（gitignore）
-├── output/                 # OCR 輸出（gitignore）
+├── requirements.txt        # Python dependencies
+├── scans/                  # Input documents (gitignored)
+├── output/                 # OCR results (gitignored)
 └── scripts/
-    ├── main.py             # 入口腳本
-    ├── file_utils.py       # 檔案掃描與格式轉換
-    ├── ocr_processor.py    # Z.ai GLM-OCR API 封裝
-    └── output_formatter.py # 輸出格式化
+    ├── main.py             # Entry point
+    ├── file_utils.py       # File scanning & format conversion
+    ├── ocr_processor.py    # Z.ai GLM-OCR API wrapper
+    └── output_formatter.py # Output formatting
 ```
 
-## 常見問題
+## FAQ
 
-**Q: 收到「未設定 ZAI_API_KEY」錯誤？**
+**Q: "ZAI_API_KEY not set" error?**
 
-確認 `.env` 檔案存在且 `ZAI_API_KEY` 已正確設定。
+Make sure `.env` exists and `ZAI_API_KEY` is correctly configured.
 
-**Q: 收到 401 錯誤？**
+**Q: 401 error?**
 
-API Key 可能已過期或不正確，請到 <a href="https://open.bigmodel.cn/" target="_blank" rel="noopener noreferrer">Z.ai Open Platform</a> 重新產生。
+Your API key may be expired or invalid. Generate a new one at <a href="https://open.bigmodel.cn/" target="_blank" rel="noopener noreferrer">Z.ai Open Platform</a>.
 
-**Q: 收到 429 錯誤？**
+**Q: 429 error?**
 
-API 呼叫頻率過高，程式會自動等待並重試（最多 3 次）。如果持續發生，請降低檔案數量分批處理。
+Rate limit hit. The tool will automatically wait and retry (up to 3 times). If it persists, split your files into smaller batches.
 
-**Q: 支援子目錄嗎？**
+**Q: Does it scan subdirectories?**
 
-不支援。`scans/` 下的檔案會直接處理，子目錄內的檔案會被忽略。
+No. Only files directly inside `scans/` are processed. Subdirectory contents are ignored.
 
 ---
 
@@ -150,4 +148,4 @@ SOFTWARE.
 
 ---
 
-<p align="center"><a href="https://geniushub.cc" target="_blank" rel="noopener noreferrer">geniushub.cc</a> 開發</p>
+<p align="center">Built by <a href="https://geniushub.cc" target="_blank" rel="noopener noreferrer">geniushub.cc</a></p>
