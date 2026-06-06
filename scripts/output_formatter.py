@@ -16,12 +16,29 @@ def ensure_output_dir(output_dir: str) -> Path:
     return p
 
 
+# Windows 保留檔名（不分大小寫）
+_WINDOWS_RESERVED = {
+    "con", "prn", "aux", "nul",
+    *(f"com{d}" for d in range(1, 10)),
+    *(f"lpt{d}" for d in range(1, 10)),
+}
+
+
 def sanitize_filename(name: str) -> str:
-    """清理檔名，移除不安全字元。"""
-    safe = name.replace("/", "_").replace("\\", "_")
-    safe = safe.replace(":", "_").replace("*", "_")
-    safe = safe.replace("?", "_").replace('"', "_")
-    safe = safe.replace("<", "_").replace(">", "_").replace("|", "_")
+    """清理檔名，移除不安全字元與 Windows 保留名稱。"""
+    # 移除 NULL byte
+    safe = name.replace("\0", "")
+    # 替換非法字元
+    for ch in r'/\:*?"<>|':
+        safe = safe.replace(ch, "_")
+    # 去頭尾空白與點
+    safe = safe.strip(". ")
+    # 防禦 Windows 保留名稱
+    if safe.lower() in _WINDOWS_RESERVED:
+        safe = f"_{safe}"
+    # 空檔名給預設值
+    if not safe:
+        safe = "unnamed"
     return safe
 
 

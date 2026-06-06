@@ -45,19 +45,26 @@ def convert_webp_to_png(webp_path: Path) -> Path:
 def encode_file_to_data_uri(file_path: Path) -> str:
     """將檔案編碼為 base64 data URI（供 API 使用）。"""
     ext = file_path.suffix.lower()
+    converted = False
 
     # WebP 先轉成 PNG
     if ext == ".webp":
         file_path = convert_webp_to_png(file_path)
         ext = ".png"
+        converted = True
 
     mime_type = MIME_MAP.get(ext, "application/octet-stream")
 
-    with open(file_path, "rb") as f:
-        file_bytes = f.read()
+    try:
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
 
-    encoded = base64.b64encode(file_bytes).decode("utf-8")
-    return f"data:{mime_type};base64,{encoded}"
+        encoded = base64.b64encode(file_bytes).decode("utf-8")
+        return f"data:{mime_type};base64,{encoded}"
+    finally:
+        # 清除 WebP 轉換產生的暫存 PNG
+        if converted:
+            file_path.unlink(missing_ok=True)
 
 
 def get_file_size_mb(file_path: Path) -> float:
@@ -66,10 +73,14 @@ def get_file_size_mb(file_path: Path) -> float:
 
 
 def validate_file(file_path: Path) -> Optional[str]:
-    """驗證檔案是否符合 API 限制。回傳錯誤訊息，通過則回傳 None。"""
+    """驗證檔案是否符合 API 限制。回傳錯誤訊息，通過則回傳 None。
+
+    注意：WebP 會先轉為 PNG 再上傳，此處以 WebP 原始大小估算，
+    極端情況下壓縮率高的 WebP 轉 PNG 後可能膨脹超過 10MB 上限。
+    """
     ext = file_path.suffix.lower()
 
-    # 判斷實際處理後的格式
+    # 判斷實際處理後的格式（WebP → PNG）
     if ext == ".webp":
         ext = ".png"
 

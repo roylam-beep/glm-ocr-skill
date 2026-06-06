@@ -75,7 +75,6 @@ def main():
     args = parser.parse_args()
 
     # 載入設定
-    load_dotenv()
     api_key = load_api_key()
     scan_dir = args.dir
     output_dir = args.output
@@ -86,7 +85,11 @@ def main():
 
     # 掃描檔案
     print(f"[SCAN] 掃描目錄: {os.path.abspath(scan_dir)}")
-    files = find_supported_files(scan_dir)
+    try:
+        files = find_supported_files(scan_dir)
+    except FileNotFoundError as e:
+        print(f"[ERROR] {e}")
+        return
 
     if not files:
         print("[WARN] 未找到任何支援的檔案（jpg, jpeg, png, pdf, webp）。")

@@ -48,7 +48,7 @@ python scripts/main.py --dir ./scans --no-combined
 | JPEG | .jpg, .jpeg | 10 MB |
 | PNG | .png | 10 MB |
 | WebP | .webp | 10 MB（自動轉 PNG） |
-| PDF | .pdf | 50 MB（最多 100 頁） |
+| PDF | .pdf | 50 MB |
 
 ## 輸出格式
 

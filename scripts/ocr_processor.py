@@ -2,7 +2,6 @@
 GLM-OCR API 呼叫模組：將檔案送入 Z.ai layout_parsing 端點進行 OCR 辨識。
 """
 
-import json
 import os
 import time
 from typing import Any
@@ -13,10 +12,11 @@ import requests
 class GLMOCRProcessor:
     """封裝 Z.ai GLM-OCR API 的處理器。"""
 
-    API_URL = "https://api.z.ai/api/paas/v4/layout_parsing"
+    API_BASE = os.getenv("ZAI_API_BASE", "https://api.z.ai/api/paas/v4")
 
     def __init__(self, api_key: str):
         self.api_key = api_key
+        self.api_url = f"{self.API_BASE}/layout_parsing"
         self.headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
@@ -43,17 +43,23 @@ class GLMOCRProcessor:
         for attempt in range(retries):
             try:
                 resp = requests.post(
-                    self.API_URL,
+                    self.api_url,
                     json=payload,
                     headers=self.headers,
                     timeout=120,
                 )
 
                 if resp.status_code == 200:
-                    return resp.json()
+                    try:
+                        return resp.json()
+                    except ValueError:
+                        raise RuntimeError("API 回應非有效 JSON 格式")
 
                 # 處理已知錯誤碼
-                error_data = resp.json() if resp.text else {}
+                try:
+                    error_data = resp.json() if resp.text else {}
+                except ValueError:
+                    error_data = {}
                 error_msg = error_data.get("error", {}).get("message", resp.text)
 
                 if resp.status_code == 429:
@@ -74,14 +80,16 @@ class GLMOCRProcessor:
                 )
 
             except requests.exceptions.Timeout:
-                print(f"  [WARN] 請求逾時，重試中 (第 {attempt + 1}/{retries} 次)...")
+                wait = (attempt + 1) * 5
+                print(f"  [WARN] 請求逾時，{wait} 秒後重試 (第 {attempt + 1}/{retries} 次)...")
                 last_error = RuntimeError("請求逾時")
-                time.sleep(5)
+                time.sleep(wait)
                 continue
             except requests.exceptions.ConnectionError as e:
-                print(f"  [WARN] 連線錯誤，重試中 (第 {attempt + 1}/{retries} 次)...")
+                wait = (attempt + 1) * 5
+                print(f"  [WARN] 連線錯誤，{wait} 秒後重試 (第 {attempt + 1}/{retries} 次)...")
                 last_error = e
-                time.sleep(5)
+                time.sleep(wait)
                 continue
 
         raise last_error or RuntimeError("OCR 處理失敗（已達最大重試次數）")
