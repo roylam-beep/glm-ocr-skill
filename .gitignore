@@ -1,0 +1,33 @@
+# 環境變數（含敏感 API Key）
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# 虛擬環境
+venv/
+.venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 掃描輸出目錄
+output/
+scans/
+
+# 暫存檔案
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
