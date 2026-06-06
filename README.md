@@ -1,5 +1,9 @@
 # GLM OCR Skill
 
+![GitHub Topics](https://img.shields.io/badge/topics-ocr%20%7C%20glm%20%7C%20zai%20%7C%20invoice%20%7C%20receipt%20%7C%20accounting%20%7C%20document--parsing%20%7C%20vision--llm-blue)
+
+> **English** | A CLI tool that scans local folders of receipts, invoices, and documents using Z.ai's GLM-OCR model. Outputs structured Markdown + JSON with layout analysis. Powered by `glm-ocr` via the [Z.ai API](https://api.z.ai). Zero-config, single-command: `python scripts/main.py`.
+
 使用 Z.ai 的 GLM-OCR 模型，掃描本地資料夾中的單據（圖片 / PDF / WebP），輸出結構化的 OCR 辨識結果。支援發票、收據、銀行單據等文件的文字辨識與版面分析。
 
 ## 快速開始
