@@ -64,7 +64,7 @@ python scripts/main.py --dir ./scans --no-combined
 - **端點**: `POST https://api.z.ai/api/paas/v4/layout_parsing`
 - **模型**: `glm-ocr`
 - **認證**: Bearer Token（API Key）
-- **文件**: https://docs.z.ai/guides/vlm/glm-ocr
+- **文件**: <a href="https://docs.z.ai/guides/vlm/glm-ocr" target="_blank" rel="noopener noreferrer">GLM-OCR 文件</a>
 
 ## 錯誤處理
 
